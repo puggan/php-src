@@ -1786,6 +1786,27 @@ ZEND_API int ZEND_FASTCALL concat_function(zval *result, zval *op1, zval *op2) /
 }
 /* }}} */
 
+ZEND_API int ZEND_FASTCALL condition_function(zval *result, zval *op1, zval *op2) /* {{{ */
+{
+	int converted = 0;
+
+	if(zend_is_true(op1)) {
+		ZVAL_COPY_VALUE(result, op1);
+	} else {
+		ZVAL_COPY_VALUE(result, op2);
+	}
+
+	if (Z_ISREF_P(op1)) {
+		op1 = Z_REFVAL_P(op1);
+	} else if (Z_ISREF_P(op2)) {
+		op2 = Z_REFVAL_P(op2);
+	} else {
+		zend_throw_error(NULL, "Unsupported operand types");
+		return FAILURE; /* unknown datatype */
+	}
+}
+/* }}} */
+
 ZEND_API int ZEND_FASTCALL string_compare_function_ex(zval *op1, zval *op2, zend_bool case_insensitive) /* {{{ */
 {
 	zend_string *str1 = zval_get_string(op1);
